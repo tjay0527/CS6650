@@ -30,6 +30,10 @@ public class Metrics {
         this.latencyQueue.add(latency);
     }
 
+    /***
+     * Get the average latency of all requests
+     * @return
+     */
     public long getAveLatency(){
        long res = 0;
        Iterator<Long> iterate = latencyQueue.iterator();

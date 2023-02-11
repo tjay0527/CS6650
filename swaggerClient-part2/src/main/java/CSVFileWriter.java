@@ -8,6 +8,12 @@ import java.util.concurrent.LinkedBlockingDeque;
 import com.opencsv.CSVWriter;
 public class CSVFileWriter {
     private static final String filePath = "data.csv";
+
+    /***
+     * write the information of each request into a CSV file for plotting the diagram.
+     * @param metrics
+     * @throws IOException
+     */
     public void writeCSVHelper(Metrics metrics) throws IOException {
         try {
             File csvFile = new File(filePath);

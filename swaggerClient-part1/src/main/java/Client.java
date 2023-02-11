@@ -13,8 +13,12 @@ public class Client implements Runnable{
         this.metrics = metrics;
     }
 
+    /***
+     * Create a single client instance for sending POST request with retry mechanism.
+     */
     @Override
     public void run() {
+        //set up base URL and request body
         io.swagger.client.api.SwipeApi apiInstance = new io.swagger.client.api.SwipeApi();
 //        apiInstance.getApiClient().setBasePath("http://localhost:8080/assignment1__exploded/TwinderServlet");
         apiInstance.getApiClient().setBasePath("http://35.86.84.201:8080/assignment1 _exploded archive/TwinderServlet");
@@ -24,8 +28,7 @@ public class Client implements Runnable{
 
         //post request
         Long requestStartTime = System.currentTimeMillis();
-        //increase total request count
-        metrics.increaseTotalRequest();
+        metrics.increaseTotalRequest();//increase total request count
         int tryCnt = 0;
         while(tryCnt < RETRYLIMIT){
             try {
@@ -36,6 +39,7 @@ public class Client implements Runnable{
                     System.out.println(e.getCode() + ": " + e.getResponseBody());
                 }
                 tryCnt++;
+                //retry for up to 5 times if the previous request fails
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException ex) {
@@ -51,6 +55,11 @@ public class Client implements Runnable{
         //add the latency of this request to Metrics' latencyList
         metrics.addToLatencyQueue(requestEndTime-requestStartTime);
     }
+
+    /***
+     * Generating request body randomly.
+     * @return
+     */
     public static SwipeDetails randomBody(){
         String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         final int LEN = ThreadLocalRandom.current().nextInt(COMMENTLENGTH)+1;

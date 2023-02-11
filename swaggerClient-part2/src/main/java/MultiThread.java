@@ -11,6 +11,11 @@ public class MultiThread {
 
     private final static int REQUESTNUMBER = 500000;
     private static final int MAX_THREAD = 50;
+
+    /***
+     *  main function that repeatedly creates instances for sending POST requests.
+     * @param args
+     */
     public static void main(String[] args) throws IOException {
         Metrics metrics = new Metrics();
         Long startTime = System.currentTimeMillis();
@@ -35,6 +40,11 @@ public class MultiThread {
 
     }
 
+    /***
+     * print out the necessary information for part 1
+     * @param metrics
+     * @param wallTime
+     */
     public static void printPart1(Metrics metrics, Long wallTime){
         System.out.println("Wall Time: " + wallTime + " ms");
         System.out.println("The number of threads: " + MAX_THREAD);
@@ -45,18 +55,21 @@ public class MultiThread {
         System.out.println("The total throughput: " + (metrics.getTotalRequest()/(double)(wallTime/1000)) + "(requests/second)");
     }
 
+    /***
+     * print out the necessary information for part 2
+     * @param metrics
+     * @param wallTimeSec
+     */
     public static void printPart2(Metrics metrics, Long wallTimeSec){
         LinkedBlockingDeque<Result> resultQueue = metrics.getResultQueue();
         int sizeOfQueue = resultQueue.size();
-
-        //sort latency to get median
         Long[] latencyArr = new Long[sizeOfQueue];
         int idx = 0;
         Iterator<Result> iterate = resultQueue.iterator();
         while(iterate.hasNext()){
             latencyArr[idx++] = iterate.next().getLatency();
         }
-
+        //sort the array of request in ascending order based on the start time
         Arrays.sort(latencyArr);
 
         long median = latencyArr[sizeOfQueue/2];

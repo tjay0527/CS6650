@@ -21,6 +21,10 @@ public class Metrics {
 
     public LinkedBlockingDeque<Result> getResultQueue() {return resultQueue;}
 
+    /***
+     * get the total of latency of all requests
+     * @return
+     */
     public long getSumOfLatency(){
         long sum = 0;
         for(Result res: resultQueue){
@@ -37,6 +41,10 @@ public class Metrics {
         return minResponse;
     }
 
+    /***
+     * get he average latency of all requests
+     * @return
+     */
     public long getAveLatency(){
         long sum = 0;
         for(Result res: resultQueue){
