@@ -17,7 +17,7 @@ public class Client implements Runnable{
     public void run() {
         io.swagger.client.api.SwipeApi apiInstance = new io.swagger.client.api.SwipeApi();
 //        apiInstance.getApiClient().setBasePath("http://localhost:8080/assignment1__exploded/TwinderServlet");
-        apiInstance.getApiClient().setBasePath("http://54.191.251.195:8080/assignment1 _exploded archive/TwinderServlet");
+        apiInstance.getApiClient().setBasePath("http://35.86.84.201:8080/assignment1 _exploded archive/TwinderServlet");
         SwipeDetails body = randomBody();
         String[] randomLeftRight = new String[]{"left", "right"};
         String leftOrRight = randomLeftRight[ThreadLocalRandom.current().nextInt(2)];
@@ -56,7 +56,7 @@ public class Client implements Runnable{
         res.setLatency(latency);
         metrics.setMaxResponse(Math.max(metrics.getMaxResponse(), latency));
         metrics.setMinResponse(Math.min(metrics.getMinResponse(), latency));
-        metrics.addToResultList(res);
+        metrics.addToResultQueue(res);
     }
 
     public static SwipeDetails randomBody(){

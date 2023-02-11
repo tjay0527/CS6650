@@ -1,11 +1,12 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Metrics {
     private AtomicInteger totalRequest = new AtomicInteger(0);
     private AtomicInteger successRequest = new AtomicInteger(0);
-    private List<Result> resultList = new ArrayList<>();
+    private LinkedBlockingDeque<Result> resultQueue = new LinkedBlockingDeque<>();
     private Long maxResponse = Long.MIN_VALUE;
     private Long minResponse = Long.MAX_VALUE;
 
@@ -18,13 +19,11 @@ public class Metrics {
         return successRequest.intValue();
     }
 
-    public List<Result> getResultList() {
-        return resultList;
-    }
+    public LinkedBlockingDeque<Result> getResultQueue() {return resultQueue;}
 
     public long getSumOfLatency(){
         long sum = 0;
-        for(Result res: resultList){
+        for(Result res: resultQueue){
             sum += res.getLatency();
         }
         return sum;
@@ -38,6 +37,14 @@ public class Metrics {
         return minResponse;
     }
 
+    public long getAveLatency(){
+        long sum = 0;
+        for(Result res: resultQueue){
+            sum += res.getLatency();
+        }
+        return sum/resultQueue.size();
+    }
+
     //setter
     public void increaseTotalRequest() {
         this.totalRequest.incrementAndGet();
@@ -47,8 +54,8 @@ public class Metrics {
         this.successRequest.incrementAndGet();
     }
 
-    public void addToResultList(Result res) {
-        this.resultList.add(res);
+    public void addToResultQueue(Result res) {
+        this.resultQueue.add(res);
     }
 
     public void setMaxResponse(Long maxResponse) {

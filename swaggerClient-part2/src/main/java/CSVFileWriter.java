@@ -1,7 +1,9 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingDeque;
 
 import com.opencsv.CSVWriter;
 public class CSVFileWriter {
@@ -14,8 +16,11 @@ public class CSVFileWriter {
             String[] header = {"Start Time", "Request Type", "Latency", "Response Code"};
             writer.writeNext(header);
 
-            List<Result> resultList = metrics.getResultList();
-            for(Result res: resultList){
+
+            LinkedBlockingDeque<Result> resultQueue = metrics.getResultQueue();
+            Iterator<Result> iterate = resultQueue.iterator();
+            while(iterate.hasNext()){
+                Result res = iterate.next();
                 String[] data = {res.getStartTime(), res.getType(), String.valueOf(res.getLatency()), res.getResponseCode()};
                 writer.writeNext(data);
             }

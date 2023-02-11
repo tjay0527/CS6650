@@ -17,7 +17,7 @@ public class Client implements Runnable{
     public void run() {
         io.swagger.client.api.SwipeApi apiInstance = new io.swagger.client.api.SwipeApi();
 //        apiInstance.getApiClient().setBasePath("http://localhost:8080/assignment1__exploded/TwinderServlet");
-        apiInstance.getApiClient().setBasePath("http://54.191.251.195/assignment1 _exploded archive/TwinderServlet");
+        apiInstance.getApiClient().setBasePath("http://35.86.84.201:8080/assignment1 _exploded archive/TwinderServlet");
         SwipeDetails body = randomBody();
         String[] randomLeftRight = new String[]{"left", "right"};
         String leftOrRight = randomLeftRight[ThreadLocalRandom.current().nextInt(2)];
@@ -49,7 +49,7 @@ public class Client implements Runnable{
 
         Long requestEndTime = System.currentTimeMillis();
         //add the latency of this request to Metrics' latencyList
-//        metrics.addToLatencyList(requestEndTime-requestStartTime);
+        metrics.addToLatencyQueue(requestEndTime-requestStartTime);
     }
     public static SwipeDetails randomBody(){
         String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
