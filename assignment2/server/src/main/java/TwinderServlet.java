@@ -1,6 +1,5 @@
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
@@ -10,44 +9,33 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeoutException;
-
-//@WebServlet(name = "TwinderServlet", value = "/swipe/*")
 @WebServlet(name = "TwinderServlet", value = "/TwinderServlet/*")
 public class TwinderServlet extends HttpServlet {
-    private static final int ON_DEMAND = 20;
-    // RMQ broker machine
+
 //    private static final String SERVER = "localhost";
-    private static final String SERVER = "35.87.81.55";
-    // test queue name
+    private static final String SERVER = "35.92.131.62";
+    private static final String USER = "rabbit";
+    private static final String PASSWORD = "rabbit";
     private static final String QUEUE_NAME = "test";
-    // the durtaion in seconds a client waits for a channel to be available in the pool
-    // Tune value to meet request load and pass to config.setMaxWait(...) method
+    private static final int ON_DEMAND = 20;
     private static final int WAIT_TIME_SECS = 1;
     private GenericObjectPool<Channel> pool;
+
     @Override
     public void init() throws ServletException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(SERVER);
-        factory.setVirtualHost("cherry_broker");
-        factory.setUsername("user");
-        factory.setPassword("password");
+        factory.setUsername(USER);
+        factory.setPassword(PASSWORD);
 //        factory.setUsername("guest");
 //        factory.setPassword("guest");
         try {
-            // we use this object to tailor the behavior of the GenericObjectPool
             GenericObjectPoolConfig config = new GenericObjectPoolConfig();
-            // The code as is allows the channel pool to grow to meet demand.
-            // Change to config.setMaxTotal(NUM_CHANS) to limit the pool size
             config.setMaxTotal(ON_DEMAND);
-            // clients will block when pool is exhausted, for a maximum duration of WAIT_TIME_SECS
             config.setBlockWhenExhausted(true);
-            // tune WAIT_TIME_SECS to meet your workload/demand
             config.setMaxWait(Duration.ofSeconds(WAIT_TIME_SECS));
-            // The channel facory generates new channels on demand, as needed by the GenericObjectPool
             RMQChannelFactory chanFactory = new RMQChannelFactory (factory.newConnection());
-            //create the pool
             pool = new GenericObjectPool<>(chanFactory, config);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -61,10 +49,10 @@ public class TwinderServlet extends HttpServlet {
         res.setContentType("application/json");
         res.setCharacterEncoding("UTF-8");
         String urlPath = req.getPathInfo();
-        // check we have a URL
+        // check if we have a URL
         if (urlPath == null || urlPath.isEmpty()) {
             res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            res.getWriter().write("missing paramterers");
+            res.getWriter().write("missing parameters");
             return;
         }
 
@@ -73,7 +61,7 @@ public class TwinderServlet extends HttpServlet {
         // urlParts = [, swipe, left]
         if (urlParts.length != 3 || !(urlParts[2].equals("left") || urlParts[2].equals("right"))) {
             res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            res.getWriter().write("Valid url input: left or right");
+            res.getWriter().write("Invalid url input: left or right");
             return;
         }
 
@@ -84,6 +72,8 @@ public class TwinderServlet extends HttpServlet {
             sb.append(s);
         }
         Swipe swipe = (Swipe) gson.fromJson(sb.toString(), Swipe.class);
+        //append direction to payload for the consumer to use
+        sb.append("+").append(urlParts[2]);
 
         try {
             boolean invalidInPut = false;
@@ -134,15 +124,10 @@ public class TwinderServlet extends HttpServlet {
     public boolean publishMessage(String swipe) throws Exception {
         try {
             Channel channel;
-            // get a channel from the pool
             channel = pool.borrowObject();
-
-            // publish a message
             channel.queueDeclare(QUEUE_NAME, false, false, false, null);
             byte[] payLoad = swipe.getBytes();
             channel.basicPublish("", QUEUE_NAME, null, payLoad);
-
-            // return the channel to the pool
             pool.returnObject(channel);
             return true;
         } catch (Exception ex) {
