@@ -1,4 +1,5 @@
 import com.google.gson.Gson;
+import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ConnectionFactory;
 import org.apache.commons.pool2.impl.GenericObjectPool;
@@ -14,13 +15,13 @@ import java.util.concurrent.TimeoutException;
 public class TwinderServlet extends HttpServlet {
 
 //    private static final String SERVER = "localhost";
-    private static final String SERVER = "35.92.131.62";
+    private static final String SERVER = "54.200.171.161";
     private static final String USER = "rabbit";
     private static final String PASSWORD = "rabbit";
-    private static final String QUEUE_NAME = "test";
     private static final int ON_DEMAND = 20;
     private static final int WAIT_TIME_SECS = 1;
     private GenericObjectPool<Channel> pool;
+    private FanoutExchange fanoutExchange;
 
     @Override
     public void init() throws ServletException {
@@ -28,8 +29,6 @@ public class TwinderServlet extends HttpServlet {
         factory.setHost(SERVER);
         factory.setUsername(USER);
         factory.setPassword(PASSWORD);
-//        factory.setUsername("guest");
-//        factory.setPassword("guest");
         try {
             GenericObjectPoolConfig config = new GenericObjectPoolConfig();
             config.setMaxTotal(ON_DEMAND);
@@ -37,9 +36,15 @@ public class TwinderServlet extends HttpServlet {
             config.setMaxWait(Duration.ofSeconds(WAIT_TIME_SECS));
             RMQChannelFactory chanFactory = new RMQChannelFactory (factory.newConnection());
             pool = new GenericObjectPool<>(chanFactory, config);
+            fanoutExchange = new FanoutExchange(pool);
+            fanoutExchange.declareQueues();
+            fanoutExchange.declareExchange();
+            fanoutExchange.declareBindings();
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (TimeoutException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -107,32 +112,20 @@ public class TwinderServlet extends HttpServlet {
         }
 
         try {
-            if(publishMessage(sb.toString())){
+            if(fanoutExchange.publishMessage(sb.toString())){
                 res.setStatus(HttpServletResponse.SC_OK);
                 res.getWriter().write(sb.toString());
-                res.getWriter().flush();
             }else{
                 res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 res.getWriter().write("Failed to publish");
-                res.getWriter().flush();
             }
+            res.getWriter().flush();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public boolean publishMessage(String swipe) throws Exception {
-        try {
-            Channel channel;
-            channel = pool.borrowObject();
-            channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-            byte[] payLoad = swipe.getBytes();
-            channel.basicPublish("", QUEUE_NAME, null, payLoad);
-            pool.returnObject(channel);
-            return true;
-        } catch (Exception ex) {
-            System.out.println("Failed to publish swipe message to RabbitMQ");
-            return false;
-        }
-    }
+
+
+
 }
