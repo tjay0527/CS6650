@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeoutException;
 
 public class ConsumerPotential implements Runnable{
-    private static final String SERVER = "54.200.171.161";
+    private static final String SERVER = "172.31.29.252";
     private static final String USER = "rabbit";
     private static final String PASSWORD = "rabbit";
     private static final String FANOUT_EXCHANGE = "my-fanout-exchange";
@@ -45,7 +45,7 @@ public class ConsumerPotential implements Runnable{
     }
 
     public void declareQueues() throws Exception {
-        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+        channel.queueDeclare(QUEUE_NAME, true, false, false, null);
     }
 
     public void declareBindings() throws Exception {
@@ -58,7 +58,7 @@ public class ConsumerPotential implements Runnable{
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
-//            saveInfo(message);
+            saveInfo(message);
 //            System.out.println(message);
             channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
         };

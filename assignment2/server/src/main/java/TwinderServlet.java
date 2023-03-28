@@ -15,7 +15,7 @@ import java.util.concurrent.TimeoutException;
 public class TwinderServlet extends HttpServlet {
 
 //    private static final String SERVER = "localhost";
-    private static final String SERVER = "54.200.171.161";
+    private static final String SERVER = "34.215.35.73";
     private static final String USER = "rabbit";
     private static final String PASSWORD = "rabbit";
     private static final int ON_DEMAND = 20;
