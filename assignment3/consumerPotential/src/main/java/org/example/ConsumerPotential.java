@@ -9,20 +9,18 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeoutException;
 
 public class ConsumerPotential implements Runnable{
-    private static final String SERVER = "52.13.120.82";
+    private static final String SERVER = "54.245.186.113";
     private static final String USER = "rabbit";
     private static final String PASSWORD = "rabbit";
     private static final String FANOUT_EXCHANGE = "my-fanout-exchange";
     private static final String QUEUE_NAME = "PotentialQ";
-    private static final int MAX_QUEUE = 20;
+    private static final int MAX_QUEUE = 200;
 
     private Connection connection;
     private Channel channel;
-    private ConcurrentHashMap<String, ConcurrentLinkedQueue<String>> mapPotential;
 
-    public ConsumerPotential(Connection connection,  ConcurrentHashMap<String, ConcurrentLinkedQueue<String>> map) {
+    public ConsumerPotential(Connection connection) {
         this.connection = connection;
-        this.mapPotential = map;
     }
 
     @Override
@@ -68,15 +66,15 @@ public class ConsumerPotential implements Runnable{
 
 
     public void saveInfo(String msg){
-        String[] msgs = msg.split("\\+");
         Gson gson = new Gson();
-        Swipe swipe = gson.fromJson(msgs[0].toString(), Swipe.class);
-        mapPotential.computeIfAbsent(swipe.getSwiper(), k->new ConcurrentLinkedQueue<String>()).offer(swipe.getSwipee());
+        Swipe info = gson.fromJson(msg, Swipe.class);
+        SwipeDao swipeDao = new SwipeDao();
+        swipeDao.insertToPotential(info.getSwiper(), info.getSwipee(), info.direction);
     }
 
-    public ConcurrentLinkedQueue<String> getPotential(String id){
-        return mapPotential.get(id);
-    }
+//    public ConcurrentLinkedQueue<String> getPotential(String id){
+//
+//    }
 
     public static void main(String[] args) throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
@@ -85,7 +83,7 @@ public class ConsumerPotential implements Runnable{
         factory.setPassword(PASSWORD);
         Connection connection = factory.newConnection();
         for(int i = 0; i < MAX_QUEUE; i++){
-            Thread con = new Thread(new ConsumerPotential(connection, new ConcurrentHashMap<>()));
+            Thread con = new Thread(new ConsumerPotential(connection));
             con.start();
         }
     }

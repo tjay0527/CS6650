@@ -7,9 +7,26 @@
         <servlet-name>TwinderServlet</servlet-name>
         <servlet-class>TwinderServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>MatchesServlet</servlet-name>
+        <servlet-class>MatchesServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>StatsServlet</servlet-name>
+        <servlet-class>StatsServlet</servlet-class>
+    </servlet>
+
 
     <servlet-mapping>
         <servlet-name>TwinderServlet</servlet-name>
         <url-pattern>/TwinderServlet/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MatchesServlet</servlet-name>
+        <url-pattern>/matches/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StatsServlet</servlet-name>
+        <url-pattern>/stats/*</url-pattern>
     </servlet-mapping>
 </web-app>

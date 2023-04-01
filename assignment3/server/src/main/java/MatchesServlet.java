@@ -4,16 +4,15 @@ import com.rabbitmq.client.ConnectionFactory;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
-import javax.servlet.annotation.*;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.TimeoutException;
-@WebServlet(name = "TwinderServlet", value = "/TwinderServlet/*")
-public class TwinderServlet extends HttpServlet {
 
-//    private static final String SERVER = "localhost";
+public class MatchesServlet extends HttpServlet {
     private static final String SERVER = "54.245.186.113";
     private static final String USER = "rabbit";
     private static final String PASSWORD = "rabbit";
@@ -86,12 +85,6 @@ public class TwinderServlet extends HttpServlet {
             //if the swiper id is not within [1,5000]
             if(Integer.parseInt(swipe.getSwiper()) < 1 || 5000 < Integer.parseInt(swipe.getSwiper())){
                 invalidInPut = true;
-                res.getWriter().write("The swiper id is not within 1, 5000");
-            }
-            //if the swipee id is not within [1,1000000]
-            if(Integer.parseInt(swipe.getSwipee()) < 1 || 1000000 < Integer.parseInt(swipe.getSwipee())){
-                invalidInPut = true;
-                res.getWriter().write("The swipee id is not within 1, 1000000");
             }
             //if the length of the string is less than or equal to 256
             if(swipe.getComment() == null || swipe.getComment().length() > 256){

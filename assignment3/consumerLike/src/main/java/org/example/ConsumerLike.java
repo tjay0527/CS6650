@@ -7,20 +7,17 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 public class ConsumerLike implements Runnable{
-//    private static final String SERVER = "localhost";
-    private static final String SERVER = "52.13.120.82";
+    private static final String SERVER = "54.245.186.113";
     private static final String USER = "rabbit";
     private static final String PASSWORD = "rabbit";
     private static final String FANOUT_EXCHANGE = "my-fanout-exchange";
     private static final String QUEUE_NAME = "LikeQ";
-    private static final int MAX_QUEUE = 20;
+    private static final int MAX_QUEUE = 200;
     private Connection connection;
     private Channel channel;
-    private ConcurrentHashMap<String, AtomicIntegerArray> mapLikeDislikeCnt;
 
-    public ConsumerLike(Connection connection,  ConcurrentHashMap<String, AtomicIntegerArray> map) {
+    public ConsumerLike(Connection connection) {
         this.connection = connection;
-        this.mapLikeDislikeCnt = map;
     }
 
     @Override
@@ -36,7 +33,6 @@ public class ConsumerLike implements Runnable{
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
     public void declareExchange() throws Exception {
@@ -58,7 +54,6 @@ public class ConsumerLike implements Runnable{
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
             saveInfo(message);
-//            System.out.println(message);
             channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
         };
         // process messages
@@ -66,18 +61,14 @@ public class ConsumerLike implements Runnable{
     }
 
     public void saveInfo(String msg){
-        String[] msgs = msg.split("\\+");
         Gson gson = new Gson();
-        Swipe swipe = gson.fromJson(msgs[0].toString(), Swipe.class);
-        if(msgs[1].equals("left"))
-            mapLikeDislikeCnt.computeIfAbsent(swipe.getSwiper(), k->new AtomicIntegerArray(2)).incrementAndGet(0);
-        else if(msgs[1].equals("right"))
-            mapLikeDislikeCnt.computeIfAbsent(swipe.getSwiper(), k->new AtomicIntegerArray(2)).incrementAndGet(1);
+        Swipe info = gson.fromJson(msg, Swipe.class);
+        SwipeDao swipeDao = new SwipeDao();
+        swipeDao.insertToLike(info.getSwiper(), info.direction);
     }
 
-    public AtomicIntegerArray getLikeDislike(String id){
-        return mapLikeDislikeCnt.get(id);
-    }
+//    public AtomicIntegerArray getLikeDislike(String id){
+//    }
 
     public static void main(String[] args) throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
@@ -86,7 +77,7 @@ public class ConsumerLike implements Runnable{
         factory.setPassword(PASSWORD);
         Connection connection = factory.newConnection();
         for(int i = 0; i < MAX_QUEUE; i++){
-            Thread con = new Thread(new ConsumerLike(connection, new ConcurrentHashMap<>()));
+            Thread con = new Thread(new ConsumerLike(connection));
             con.start();
         }
     }
