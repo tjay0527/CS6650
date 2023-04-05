@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
 
 public class ConsumerLike implements Runnable{
 //    private static final String SERVER = "localhost";
-    private static final String SERVER = "54.244.60.251";
+    private static final String SERVER = "52.13.120.82";
     private static final String USER = "rabbit";
     private static final String PASSWORD = "rabbit";
     private static final String FANOUT_EXCHANGE = "my-fanout-exchange";

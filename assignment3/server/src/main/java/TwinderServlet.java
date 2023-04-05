@@ -14,7 +14,7 @@ import java.util.concurrent.TimeoutException;
 public class TwinderServlet extends HttpServlet {
 
 //    private static final String SERVER = "localhost";
-    private static final String SERVER = "54.245.186.113";
+    private static final String SERVER = "50.112.70.33";
     private static final String USER = "rabbit";
     private static final String PASSWORD = "rabbit";
     private static final int ON_DEMAND = 20;
@@ -61,8 +61,7 @@ public class TwinderServlet extends HttpServlet {
         }
 
         String[] urlParts = urlPath.split("/");
-        // urlPath  = "/swipe/left"
-        // urlParts = [, swipe, left]
+        // urlPath  = "/swipe/left", urlParts = [, swipe, left]
         if (urlParts.length != 3 || !(urlParts[2].equals("left") || urlParts[2].equals("right"))) {
             res.setStatus(HttpServletResponse.SC_NOT_FOUND);
             res.getWriter().write("Invalid url input: left or right");

@@ -15,7 +15,7 @@ import java.util.concurrent.TimeoutException;
 public class TwinderServlet extends HttpServlet {
 
 //    private static final String SERVER = "localhost";
-    private static final String SERVER = "34.215.35.73";
+    private static final String SERVER = "52.13.30.0";
     private static final String USER = "rabbit";
     private static final String PASSWORD = "rabbit";
     private static final int ON_DEMAND = 20;
@@ -77,8 +77,10 @@ public class TwinderServlet extends HttpServlet {
             sb.append(s);
         }
         Swipe swipe = (Swipe) gson.fromJson(sb.toString(), Swipe.class);
-        //append direction to payload for the consumer to use
-        sb.append("+").append(urlParts[2]);
+        //set direction in swipe pojo
+        swipe.setDirction(urlParts[2]);
+        String json = gson.toJson(swipe);
+
 
         try {
             boolean invalidInPut = false;
@@ -112,9 +114,9 @@ public class TwinderServlet extends HttpServlet {
         }
 
         try {
-            if(fanoutExchange.publishMessage(sb.toString())){
+            if(fanoutExchange.publishMessage(json)){
                 res.setStatus(HttpServletResponse.SC_OK);
-                res.getWriter().write(sb.toString());
+                res.getWriter().write(json);
             }else{
                 res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 res.getWriter().write("Failed to publish");
@@ -125,7 +127,8 @@ public class TwinderServlet extends HttpServlet {
         }
     }
 
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException{
 
-
-
+    }
 }

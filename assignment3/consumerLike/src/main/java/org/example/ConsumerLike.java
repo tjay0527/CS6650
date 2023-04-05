@@ -4,10 +4,9 @@ import java.io.IOException;
 import com.google.gson.Gson;
 
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicIntegerArray;
 
 public class ConsumerLike implements Runnable{
-    private static final String SERVER = "54.245.186.113";
+    private static final String SERVER = "50.112.70.33";
     private static final String USER = "rabbit";
     private static final String PASSWORD = "rabbit";
     private static final String FANOUT_EXCHANGE = "my-fanout-exchange";
@@ -67,8 +66,6 @@ public class ConsumerLike implements Runnable{
         swipeDao.insertToLike(info.getSwiper(), info.direction);
     }
 
-//    public AtomicIntegerArray getLikeDislike(String id){
-//    }
 
     public static void main(String[] args) throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();

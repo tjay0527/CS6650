@@ -9,7 +9,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 public class MultiThread {
 
-    private static final int REQUESTNUMBER = 500;
+    private static final int REQUESTNUMBER = 500000;
     private static final int MAX_THREAD = 100;
     private static final int ONE_SEC_TO_MILLISEC = 1000;
 

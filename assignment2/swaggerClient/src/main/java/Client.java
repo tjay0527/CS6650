@@ -16,8 +16,8 @@ public class Client implements Runnable{
     @Override
     public void run() {
         io.swagger.client.api.SwipeApi apiInstance = new io.swagger.client.api.SwipeApi();
-        apiInstance.getApiClient().setBasePath("http://localhost:8080/assignment2/TwinderServlet");
-//        apiInstance.getApiClient().setBasePath("http://35.86.84.201:8080/assignment1 _exploded archive/TwinderServlet");
+//        apiInstance.getApiClient().setBasePath("http://localhost:8080/assignment2/TwinderServlet");
+        apiInstance.getApiClient().setBasePath("http://54.245.162.31:8080/assignment2_archive/TwinderServlet");
         SwipeDetails body = randomBody();
         String[] randomLeftRight = new String[]{"left", "right"};
         String leftOrRight = randomLeftRight[ThreadLocalRandom.current().nextInt(2)];

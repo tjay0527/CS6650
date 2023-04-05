@@ -4,12 +4,10 @@ import com.google.gson.Gson;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeoutException;
 
 public class ConsumerPotential implements Runnable{
-    private static final String SERVER = "54.245.186.113";
+    private static final String SERVER = "54.245.186.11350.112.70.33";
     private static final String USER = "rabbit";
     private static final String PASSWORD = "rabbit";
     private static final String FANOUT_EXCHANGE = "my-fanout-exchange";
@@ -71,10 +69,6 @@ public class ConsumerPotential implements Runnable{
         SwipeDao swipeDao = new SwipeDao();
         swipeDao.insertToPotential(info.getSwiper(), info.getSwipee(), info.direction);
     }
-
-//    public ConcurrentLinkedQueue<String> getPotential(String id){
-//
-//    }
 
     public static void main(String[] args) throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
