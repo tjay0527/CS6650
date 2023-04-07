@@ -18,11 +18,17 @@
             <artifactId>swagger-java-client</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
+            <systemPath>${project.basedir}/lib/swagger-java-client-1.0.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <version>5.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
         </dependency>
     </dependencies>
 

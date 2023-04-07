@@ -3,18 +3,16 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ConnectionFactory;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.TimeoutException;
+
 @WebServlet(name = "TwinderServlet", value = "/TwinderServlet/*")
 public class TwinderServlet extends HttpServlet {
-
-//    private static final String SERVER = "localhost";
-    private static final String SERVER = "50.112.70.33";
+    private static final String SERVER = "34.215.167.235";
     private static final String USER = "rabbit";
     private static final String PASSWORD = "rabbit";
     private static final int ON_DEMAND = 20;
@@ -74,7 +72,7 @@ public class TwinderServlet extends HttpServlet {
         while ((s = req.getReader().readLine()) != null) {
             sb.append(s);
         }
-        Swipe swipe = (Swipe) gson.fromJson(sb.toString(), Swipe.class);
+        Swipe swipe = gson.fromJson(sb.toString(), Swipe.class);
         //set direction in swipe pojo
         swipe.setDirection(urlParts[2]);
         String json = gson.toJson(swipe);

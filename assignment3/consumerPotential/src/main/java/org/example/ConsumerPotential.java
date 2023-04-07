@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 public class ConsumerPotential implements Runnable{
-    private static final String SERVER = "54.245.186.11350.112.70.33";
+    private static final String SERVER = "34.215.167.235";
     private static final String USER = "rabbit";
     private static final String PASSWORD = "rabbit";
     private static final String FANOUT_EXCHANGE = "my-fanout-exchange";

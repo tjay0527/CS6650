@@ -6,7 +6,7 @@ import com.google.gson.Gson;
 import java.util.concurrent.*;
 
 public class ConsumerLike implements Runnable{
-    private static final String SERVER = "50.112.70.33";
+    private static final String SERVER = "34.215.167.235";
     private static final String USER = "rabbit";
     private static final String PASSWORD = "rabbit";
     private static final String FANOUT_EXCHANGE = "my-fanout-exchange";
