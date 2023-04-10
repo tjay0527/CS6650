@@ -12,7 +12,7 @@ import java.util.concurrent.TimeoutException;
 
 @WebServlet(name = "TwinderServlet", value = "/TwinderServlet/*")
 public class TwinderServlet extends HttpServlet {
-    private static final String SERVER = "34.215.167.235";
+    private static final String SERVER = "52.40.32.7";
     private static final String USER = "rabbit";
     private static final String PASSWORD = "rabbit";
     private static final int ON_DEMAND = 20;

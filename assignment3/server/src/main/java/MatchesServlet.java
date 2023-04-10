@@ -31,12 +31,12 @@ public class MatchesServlet extends HttpServlet {
 
         String[] urlParts = urlPath.split("/");
         // urlPath = "/matches/{userID}", urlParts = [, matches, userID]
-        if (urlParts.length != 2) {
+        if (urlParts.length != 3) {
             res.setStatus(HttpServletResponse.SC_NOT_FOUND);
             res.getWriter().write("Invalid url input: not matches");
             return;
         }
-        String swiperID = urlParts[1];
+        String swiperID = urlParts[2];
         try {
             List<String> matches = new ArrayList<>();
             matches = getMatchesList(swiperID);
